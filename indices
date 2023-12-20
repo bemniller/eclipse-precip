@@ -1,0 +1,8 @@
+
+# Setting hard coded lat and lon values for Dallas
+# Update this to be based on user selection
+input_lat = 32.779167
+input_lon = -96.808891
+
+# Converting input lat and lon to indices compatible with the dataset
+
