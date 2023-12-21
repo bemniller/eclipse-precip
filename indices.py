@@ -6,10 +6,9 @@ from datetime import datetime
 file_path = 'datasets\precip.V1.0.day.ltm.1981-2010.nc'
 dataset = nc.Dataset(file_path, 'r')
 
-# Assigning hard coded lat and lon values for Dallas
-# Update this to be based on user selection
-input_lat = 32
-input_lon = -96
+# Prompt user for Latitude and Longitude values
+input_lat = float(input('Enter your desired Latitude:\n'))
+input_lon = float(input('Enter your desired Longitude:\n'))
 adjusted_lon = input_lon + 360
 print(f"Latitude: {input_lat}")
 print(f"Longitude: {input_lon}")
@@ -18,8 +17,8 @@ print(f"Adjusted Longitude: {adjusted_lon}")
 # Assigning April 8 as an initial value
 # Update this to be based on user selection
 # We only need the month and day value, so we are using 1800 as a reference year for datetime
-input_month = 4
-input_day = 8
+input_month = int(input("Enter a month as a number: \n"))
+input_day = int(input("Enter a day as a number: \n"))
 input_date = datetime(1800, input_month, input_day)
 print(f"User Selected Date: {input_date}")
 
