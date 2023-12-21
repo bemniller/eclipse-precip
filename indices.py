@@ -1,18 +1,22 @@
 import netCDF4 as nc
 import numpy as np
 from datetime import datetime
+from pint import UnitRegistry
+
+# Setting up for later unit conversion
+ureg = UnitRegistry()
 
 # Open the NetCDF file
-file_path = 'datasets\precip.V1.0.day.ltm.1981-2010.nc'
+file_path = 'datasets\precip.V1.0.day.ltm.1991-2020.nc'
 dataset = nc.Dataset(file_path, 'r')
 
 # Prompt user for Latitude and Longitude values
-input_lat = float(input('Enter your desired Latitude:\n'))
-input_lon = float(input('Enter your desired Longitude:\n'))
-adjusted_lon = input_lon + 360
-print(f"Latitude: {input_lat}")
-print(f"Longitude: {input_lon}")
-print(f"Adjusted Longitude: {adjusted_lon}")
+input_lat = float(input('Enter your desired Latitude in Positive Degrees North:\n'))
+input_lon = float(input('Enter your desired Longitude in Positive Degrees West:\n'))
+# Longitude values in the dataset are in the range of 230.125-304.865
+# Given the application and data restrictions we anticipate a lon value within CONUS
+# This should be updated with error catching and handling and to expand the range of possible inputs
+adjusted_lon = 360 - input_lon
 
 # Assigning April 8 as an initial value
 # Update this to be based on user selection
@@ -20,11 +24,16 @@ print(f"Adjusted Longitude: {adjusted_lon}")
 input_month = int(input("Enter a month as a number: \n"))
 input_day = int(input("Enter a day as a number: \n"))
 input_date = datetime(1800, input_month, input_day)
-print(f"User Selected Date: {input_date}")
+# print(f"User Selected Date: {input_date}")
 
 # The Time Dimension is made up of 365 values, one for each day of the year
 # Here we convert our input month and day to the number of days from January 1, or Time[0]
 date_delta = input_date - datetime(1800, 1, 1)
+
+# Printing user selections
+print(f"Latitude: {input_lat}")
+print(f"Longitude: {input_lon}")
+print(f"Adjusted Longitude: {adjusted_lon}")
 print(f"Days since January 1: {date_delta}")
 
 # Convert the input date to the same format as the 'time' variable
@@ -44,9 +53,9 @@ lon_var = dataset.variables['lon']
 # The result is an array of differences.
 # numpy.argmin() finds the index of the minimum value, indicating the closest value to what we are looking for.
 lat_index = np.argmin(np.abs(lat_var[:] - input_lat))
-print(f"Available lat values: {lat_var[:]}")
+# print(f"Available lat values: {lat_var[:]}")
 lon_index = np.argmin(np.abs(lon_var[:] - adjusted_lon))
-print(f"Available lon values: {lon_var[:]}")
+# print(f"Available lon values: {lon_var[:]}")
 
 # Print selected indices
 print(f"Dataset Lat Index: {lat_index}")
@@ -54,8 +63,8 @@ print(f"Dataset Lon Index: {lon_index}")
 
 # Extract the precipitation data
 precip_var = dataset.variables['precip']
-precip_data = precip_var[date_index, lat_index, lon_index]
-print(f"Precipitation data: {precip_data}")
+precip_data = precip_var[date_index, lat_index, lon_index] * ureg.millimeter
+print(f"Precipitation data: {precip_data.to(ureg.inches)}")
 
 # Close the dataset
 dataset.close()
