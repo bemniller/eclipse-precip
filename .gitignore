@@ -3,3 +3,6 @@ datasets/precip.V1.0.day.ltm.1981-2010.nc
 
 # Initial Testing
 *test-bed.py*
+
+# VIM Backups
+*~*
